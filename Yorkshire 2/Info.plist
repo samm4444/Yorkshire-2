@@ -21,5 +21,13 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>In order to check whether you are in Yorkshire</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>In order to check whether you are in Yorkshire</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 </dict>
 </plist>

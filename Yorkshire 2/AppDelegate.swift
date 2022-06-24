@@ -6,14 +6,45 @@
 //
 
 import UIKit
+import MapKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
+ 
+    var locationManager = CLLocationManager()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        var coords: Array<CLLocationCoordinate2D> = []
+        if let asset = NSDataAsset(name: "coordinates") {
+            let data = asset.data
+            let d = try? (JSONSerialization.jsonObject(with: data, options: []) as! Array<Array<NSNumber>>)
+            
+            for i in d! {
+                coords.append(CLLocationCoordinate2D(latitude: CLLocationDegrees(truncating: i[1]),
+                                                     longitude: CLLocationDegrees(truncating: i[0])))
+            }
+        
+        }
+        Global.Data.circleOrigins = coords
+        
+        Global.Data.yorkshirePolygon = MKPolygon(coordinates: &coords, count: coords.count)
+        
+        
+        
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert, .badge, .sound)
+            
+        userNotificationCenter.requestAuthorization(options: authOptions) { (success, error) in
+            if let error = error {
+                print("Error: ", error)
+            }
+        }
+        
         return true
     }
 
@@ -32,5 +63,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    
+    func insideYorkshire() -> Bool {
+        let renderer = MKPolygonRenderer(polygon: Global.Data.yorkshirePolygon)
+        let mapPoint: MKMapPoint = MKMapPoint(locationManager.location!.coordinate)
+        let polygonViewPoint: CGPoint = renderer.point(for: mapPoint)
+
+
+        if renderer.path.contains(polygonViewPoint) {
+            return true
+        }
+        return false
+    }
+    
+    
 }
 
