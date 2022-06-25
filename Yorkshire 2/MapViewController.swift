@@ -14,15 +14,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     var locationManager = CLLocationManager()
     
+    var circle = MKCircle(center: CLLocationCoordinate2D(latitude: 1, longitude: 1), radius: 1)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
+        //locationManager.delegate = self
+        //locationManager.requestAlwaysAuthorization()
         mapView.addOverlay(Global.Data.yorkshirePolygon)
         var maxDist = 0.0
         if CLLocationManager.authorizationStatus() == .authorizedAlways {
             if CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self) {
+                print("always i guess")
                 var count = -1
                 for i in Global.Data.circleOrigins {
                     count += 1
@@ -42,6 +45,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     
                 }
                 
+                //
+//                let currentLocation = locationManager.location!
+//                var origins = Array<CLLocationCoordinate2D>()
+//                var closestDist = Double.infinity
+//                var closestOrigin = CLLocation()
+//                for i in Global.Data.circleOrigins {
+//                    let origin = CLLocation(latitude: i.latitude, longitude: i.longitude)
+//                    let dist = origin.distance(from: currentLocation)
+//                    if dist < closestDist {
+//                        closestDist = dist
+//                        closestOrigin = origin
+//                    }
+//                }
+//                circle = MKCircle(center: currentLocation.coordinate, radius: closestDist)
+//                mapView.addOverlay(circle)
 //                count = 0
 //                for i in Global.Data.circleOrigins {
 //                    if count % 10 == 0 {
@@ -51,54 +69,38 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 //                    count += 1
 //
 //                }
+                
+                //
             }
         }
         
-        createGeofences(radius: maxDist / 2)
+        //createGeofence()
         
     }
     
-    func createGeofences(radius: Double) {
+    func createGeofence() {
         
         guard let currentLocation = locationManager.location else { return }
         var origins = Array<CLLocationCoordinate2D>()
         var closestDist = Double.infinity
-        var closestIndex = 0
-        var count = 0
+        var closestOrigin = CLLocation()
         for i in Global.Data.circleOrigins {
             let origin = CLLocation(latitude: i.latitude, longitude: i.longitude)
             let dist = origin.distance(from: currentLocation)
             if dist < closestDist {
                 closestDist = dist
-                closestIndex = count
+                closestOrigin = origin
             }
-            count += 1
         }
         
-        var tempIndex = (closestIndex - 9)
-        tempIndex = mod(tempIndex, Global.Data.circleOrigins.count)
         
-        for _ in Range(0...18) {
-            origins.append(Global.Data.circleOrigins[tempIndex])
-            tempIndex = (tempIndex + 1)
-            tempIndex = mod(tempIndex, Global.Data.circleOrigins.count)
-        }
         
-        //
-        
-        count = 0
-        for i in origins {
-            
-            mapView.addOverlay(MKCircle(center: i, radius: radius))
-            
-            let region = CLCircularRegion(center: i, radius: radius, identifier: String(count))
-            region.notifyOnExit = true
-            region.notifyOnEntry = false
-            locationManager.startMonitoring(for: region)
-            count += 1
-        }
-        
-        mapView.addOverlay(MKCircle(center: currentLocation.coordinate, radius: 1000))
+        let region = CLCircularRegion(center: currentLocation.coordinate,
+                                      radius: closestDist,
+                                      identifier: "centre")
+        region.notifyOnExit = true
+        region.notifyOnEntry = false
+        locationManager.startMonitoring(for: region)
         
     }
     
@@ -106,6 +108,27 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         precondition(n > 0, "modulus must be positive")
         let r = a % n
         return r >= 0 ? r : r + n
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        let currentLocation = locationManager.location!
+        var origins = Array<CLLocationCoordinate2D>()
+        var closestDist = Double.infinity
+        var closestOrigin = CLLocation()
+        for i in Global.Data.circleOrigins {
+            let origin = CLLocation(latitude: i.latitude, longitude: i.longitude)
+            let dist = origin.distance(from: currentLocation)
+            if dist < closestDist {
+                closestDist = dist
+                closestOrigin = origin
+            }
+        }
+        
+        mapView.removeOverlay(circle)
+        
+        circle = MKCircle(center: currentLocation.coordinate, radius: closestDist)
+        mapView.addOverlay(circle)
+        createGeofence()
     }
     
     

@@ -22,9 +22,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>In order to check whether you are in Yorkshire</string>
+	<string>To determine whether you&apos;re inside Yorkshire</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>In order to check whether you are in Yorkshire</string>
+	<string>To determine whether you&apos;re inside Yorkshire</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

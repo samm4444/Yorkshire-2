@@ -19,7 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         self.locationManager.delegate = self
-        
+        locationManager.requestAlwaysAuthorization()
+        createGeofence()
         guard let _ = (scene as? UIWindowScene) else { return }
         
     }
@@ -60,6 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate: CLLocationManagerDelegate {
     // called when user Exits a monitored region
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("event called")
         if region is CLCircularRegion {
             // Do what you want if this information
             self.handleEvent(forRegion: region)
@@ -68,13 +70,20 @@ extension SceneDelegate: CLLocationManagerDelegate {
     
     // called when user Enters a monitored region
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+       
         if region is CLCircularRegion {
             // Do what you want if this information
             self.handleEvent(forRegion: region)
         }
     }
     
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        manager.requestAlwaysAuthorization()
+    }
+    
     func handleEvent(forRegion: CLRegion) {
+        createGeofence()
+        
         
         var coords: Array<CLLocationCoordinate2D> = []
         if let asset = NSDataAsset(name: "coordinates") {
@@ -152,8 +161,8 @@ extension SceneDelegate: CLLocationManagerDelegate {
             let notificationContent = UNMutableNotificationContent()
 
             // Add the content to the notification content
-            notificationContent.title = "✅ Welcome to Yorkshire ✅"
-            notificationContent.body = "You have entered Yorkshire"
+            notificationContent.title = "✅ You have entered Yorkshire ✅"
+            notificationContent.body = "Welcome!"
             
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1,
                                                             repeats: false)
@@ -175,46 +184,35 @@ extension SceneDelegate: CLLocationManagerDelegate {
     }
     
     
-    func createGeofences(radius: Double) {
+    func createGeofence() {
         
         guard let currentLocation = locationManager.location else { return }
-        var origins = Array<CLLocationCoordinate2D>()
+        var origins: Array<CLLocationCoordinate2D> = []
+        if let asset = NSDataAsset(name: "coordinates") {
+            let data = asset.data
+            let d = try? (JSONSerialization.jsonObject(with: data, options: []) as! Array<Array<NSNumber>>)
+            
+            for i in d! {
+                origins.append(CLLocationCoordinate2D(latitude: CLLocationDegrees(truncating: i[1]),
+                                                     longitude: CLLocationDegrees(truncating: i[0])))
+            }
+        
+        }
         var closestDist = Double.infinity
-        var closestIndex = 0
-        var count = 0
         for i in Global.Data.circleOrigins {
             let origin = CLLocation(latitude: i.latitude, longitude: i.longitude)
             let dist = origin.distance(from: currentLocation)
             if dist < closestDist {
                 closestDist = dist
-                closestIndex = count
+                //closestOrigin = origin
             }
-            count += 1
         }
         
-        var tempIndex = (closestIndex - 9)
-        tempIndex = mod(tempIndex, Global.Data.circleOrigins.count)
         
-        for _ in Range(0...18) {
-            print(tempIndex)
-            origins.append(Global.Data.circleOrigins[tempIndex])
-            tempIndex = (tempIndex + 1)
-            tempIndex = mod(tempIndex, Global.Data.circleOrigins.count)
-        }
         
-        //
-        
-        count = 0
-        for i in origins {
-                    
-            let region = CLCircularRegion(center: i, radius: radius, identifier: String(count))
-            region.notifyOnExit = true
-            region.notifyOnEntry = false
-            locationManager.startMonitoring(for: region)
-            count += 1
-        }
-        
-        let region = CLCircularRegion(center: currentLocation.coordinate, radius: 1000, identifier: "centre")
+        let region = CLCircularRegion(center: currentLocation.coordinate,
+                                      radius: closestDist,
+                                      identifier: "centre")
         region.notifyOnExit = true
         region.notifyOnEntry = false
         locationManager.startMonitoring(for: region)

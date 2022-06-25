@@ -9,7 +9,7 @@ import UIKit
 import MapKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
  
     var locationManager = CLLocationManager()
@@ -33,10 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Global.Data.yorkshirePolygon = MKPolygon(coordinates: &coords, count: coords.count)
         
         
-        
-        UIApplication.shared.applicationIconBadgeNumber = 0
-        
+                
         let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.delegate = self
         let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert, .badge, .sound)
             
         userNotificationCenter.requestAuthorization(options: authOptions) { (success, error) in
@@ -48,6 +47,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        application.applicationIconBadgeNumber = 0
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    }
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -75,6 +80,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return false
     }
+    
+    // MARK: - Notification Centre
+    
+    // This method will be called when app received push notifications in foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
+    {
+        
+        completionHandler([.banner, .sound, .list])
+    }
+    
     
     
 }

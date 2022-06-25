@@ -37,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		220E51EE28664AF800915CC3 /* straight to yorkshire.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "straight to yorkshire.gpx"; sourceTree = "<group>"; };
 		226F1387285FADFE00CCDFBB /* Yorkshire 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yorkshire 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		226F138A285FADFE00CCDFBB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		226F138C285FADFE00CCDFBB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -51,7 +52,8 @@
 		226F13AD285FAE0000CCDFBB /* Yorkshire_2UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Yorkshire_2UITestsLaunchTests.swift; sourceTree = "<group>"; };
 		226F13BA285FAEB400CCDFBB /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		226F13BC285FAF5800CCDFBB /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
-		22D5A1182863B93D008F25A2 /* gpxgenerator_path.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gpxgenerator_path.gpx; sourceTree = "<group>"; };
+		22D5A1182863B93D008F25A2 /* up.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = up.gpx; sourceTree = "<group>"; };
+		22D5A119286636B7008F25A2 /* long.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = long.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +84,9 @@
 		226F137E285FADFE00CCDFBB = {
 			isa = PBXGroup;
 			children = (
-				22D5A1182863B93D008F25A2 /* gpxgenerator_path.gpx */,
+				22D5A1182863B93D008F25A2 /* up.gpx */,
+				220E51EE28664AF800915CC3 /* straight to yorkshire.gpx */,
+				22D5A119286636B7008F25A2 /* long.gpx */,
 				226F1389285FADFE00CCDFBB /* Yorkshire 2 */,
 				226F13A0285FAE0000CCDFBB /* Yorkshire 2Tests */,
 				226F13AA285FAE0000CCDFBB /* Yorkshire 2UITests */,
@@ -447,6 +451,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Yorkshire 2/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Yorkshire?";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To determine when you enter or leave Yorkshire";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -476,6 +481,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Yorkshire 2/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Yorkshire?";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To determine when you enter or leave Yorkshire";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
